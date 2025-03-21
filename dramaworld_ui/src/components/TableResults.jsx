@@ -351,6 +351,8 @@ export default function TableResults() {
 
   return (
     <div className="card">
+        
+          <div className="col-8 md-8">
       <DataTable
         value={dramas} // Renamed from customers to dramas
         paginator
@@ -449,6 +451,8 @@ export default function TableResults() {
           filterElement={verifiedFilterTemplate}
         />
       </DataTable>
-    </div>
+      </div>
+      </div>
+
   );
 }

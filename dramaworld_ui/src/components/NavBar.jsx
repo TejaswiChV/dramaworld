@@ -1,16 +1,20 @@
 
 import React from 'react'; 
 import { Menubar } from 'primereact/menubar';
+import {  useNavigate } from 'react-router-dom';
 
 export default function NavBar() {
+    const navigate = useNavigate()
     const items = [
         {
             label: 'Home',
-            icon: 'pi pi-home'
+            icon: 'pi pi-home',
+            command: () => navigate('/')
         },
         {
-            label: 'Features',
-            icon: 'pi pi-star'
+            label: 'Dramas',
+            icon: 'pi pi-star',
+            command: () => navigate('/dramas')
         },
         {
             label: 'Projects',
