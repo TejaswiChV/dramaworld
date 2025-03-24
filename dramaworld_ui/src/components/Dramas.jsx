@@ -3,13 +3,14 @@ import { Calendar } from "primereact/calendar";
 import { InputText } from "primereact/inputtext";
 import React, { useState } from "react";
 import { format } from "date-fns";
+import "../App.css";
 
 export default function Dramas() {
   const [dramaName, setDramaName] = useState("");
   const [launchDate, setLaunchDate] = useState(null);
   const [error, setError] = useState("");
   const [dateError, setDateError] = useState("");
-
+  const showIconProps = { showIcon: false };
   const handleDramaNameChange = (e) => {
     const value = e.target.value;
     const regex = /^[a-zA-Z0-9\s]*$/; // Allows alphabets, numbers, and spaces
@@ -56,20 +57,28 @@ export default function Dramas() {
     <div>
       <h1>Dramas</h1>
       <p>List of dramas will be displayed here.</p>
-      <div className="card flex justify-content-center">
+      <div className="grid">
+        <div className="col-2">
+        <label>
+                    Name <span style={{ color: 'red' }}>*</span>
+        </label>
         <InputText
             placeholder="drama name" 
             value={dramaName} 
             onChange={handleDramaNameChange} 
         />
          {error && <small style={{ color: "red", display: "block", marginTop: "5px" }}>{error}</small>}
-      </div>
-      <div className="card flex justify-content-center mT40">
+         </div>
+         <div className="col-2">
+         <label  className="label">
+                    Launch Date <span style={{ color: 'red' }}>*</span>
+          </label>
             <Calendar  
                 placeholder="launch date" 
                 value={launchDate} 
                 onChange={handleDateChange} 
-                showIcon
+                //{ ...(true && showIconProps)}
+                { ...(true && {showIcon: true})}
                 dateFormat="mm/dd/yy"
             />
             {dateError && (
@@ -78,7 +87,8 @@ export default function Dramas() {
               </small>
             )}
         </div>
-        <div className="card flex justify-content-center mT40">
+      </div>
+      <div className="col-4">
         <Button label="Submit" severity="success" onClick={handleSubmit} />
         </div>
     </div>

@@ -109,21 +109,22 @@ export default function TableResults() {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
-      representative: { value: null, matchMode: FilterMatchMode.IN },
-      date: {
+      actor: {
+        operator: FilterOperator.AND,
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      },
+   
+      launchDate: {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }],
       },
-      balance: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
-      },
+
       status: {
         operator: FilterOperator.OR,
         constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
       },
-      activity: { value: null, matchMode: FilterMatchMode.BETWEEN },
-      verified: { value: null, matchMode: FilterMatchMode.EQUALS },
+      
+      
     });
     setGlobalFilterValue("");
   };
@@ -190,50 +191,11 @@ export default function TableResults() {
     return <div className="px-3 pt-0 pb-3 text-center">Filter by Country</div>;
   };
 
-  const representativeBodyTemplate = (rowData) => {
-    const representative = rowData.representative;
 
-    return (
-      <div className="flex align-items-center gap-2">
-        <img
-          alt={representative.name}
-          src={`https://primefaces.org/cdn/primereact/images/avatar/${representative.image}`}
-          width="32"
-        />
-        <span>{representative.name}</span>
-      </div>
-    );
-  };
 
-  const representativeFilterTemplate = (options) => {
-    return (
-      <MultiSelect
-        value={options.value}
-        options={representatives}
-        itemTemplate={representativesItemTemplate}
-        onChange={(e) => options.filterCallback(e.value)}
-        optionLabel="name"
-        placeholder="Any"
-        className="p-column-filter"
-      />
-    );
-  };
-
-  const representativesItemTemplate = (option) => {
-    return (
-      <div className="flex align-items-center gap-2">
-        <img
-          alt={option.name}
-          src={`https://primefaces.org/cdn/primereact/images/avatar/${option.image}`}
-          width="32"
-        />
-        <span>{option.name}</span>
-      </div>
-    );
-  };
 
   const dateBodyTemplate = (rowData) => {
-    return rowData.date;
+    return rowData.launchDate;
     //return formatDate(rowData.date);
   };
 
@@ -249,21 +211,8 @@ export default function TableResults() {
     );
   };
 
-  const balanceBodyTemplate = (rowData) => {
-    return formatCurrency(rowData.balance);
-  };
 
-  const balanceFilterTemplate = (options) => {
-    return (
-      <InputNumber
-        value={options.value}
-        onChange={(e) => options.filterCallback(e.value, options.index)}
-        mode="currency"
-        currency="USD"
-        locale="en-US"
-      />
-    );
-  };
+
 
   const statusBodyTemplate = (rowData) => {
     return (
@@ -289,58 +238,13 @@ export default function TableResults() {
     return <Tag value={option} severity={getSeverity(option)} />;
   };
 
-  const activityBodyTemplate = (rowData) => {
-    return (
-      <ProgressBar
-        value={rowData.activity}
-        showValue={false}
-        style={{ height: "6px" }}
-      ></ProgressBar>
-    );
-  };
 
-  const activityFilterTemplate = (options) => {
-    return (
-      <React.Fragment>
-        <Slider
-          value={options.value}
-          onChange={(e) => options.filterCallback(e.value)}
-          range
-          className="m-3"
-        ></Slider>
-        <div className="flex align-items-center justify-content-between px-2">
-          <span>{options.value ? options.value[0] : 0}</span>
-          <span>{options.value ? options.value[1] : 100}</span>
-        </div>
-      </React.Fragment>
-    );
-  };
 
-  const verifiedBodyTemplate = (rowData) => {
-    return (
-      <i
-        className={classNames("pi", {
-          "text-green-500 pi-check-circle": rowData.verified,
-          "text-red-500 pi-times-circle": !rowData.verified,
-        })}
-      ></i>
-    );
-  };
 
-  const verifiedFilterTemplate = (options) => {
-    return (
-      <div className="flex align-items-center gap-2">
-        <label htmlFor="verified-filter" className="font-bold">
-          Verified
-        </label>
-        <TriStateCheckbox
-          inputId="verified-filter"
-          value={options.value}
-          onChange={(e) => options.filterCallback(e.value)}
-        />
-      </div>
-    );
-  };
+
+
+
+
 
   const header = renderHeader();
 
@@ -352,7 +256,7 @@ export default function TableResults() {
   return (
     <div className="card">
         
-          <div className="col-8 md-8">
+          <div className="col-12 md-8">
       <DataTable
         value={dramas} // Renamed from customers to dramas
         paginator
@@ -367,8 +271,6 @@ export default function TableResults() {
         globalFilterFields={[
           "name",
           "country.name",
-          "representative.name",
-          "balance",
           "status",
         ]}
         header={header}
@@ -394,33 +296,22 @@ export default function TableResults() {
           filterApply={filterApplyTemplate}
           filterFooter={filterFooterTemplate}
         />
+  
         <Column
-          header="Agent"
-          filterField="representative"
-          showFilterMatchModes={false}
-          filterMenuStyle={{ width: "14rem" }}
-          style={{ minWidth: "14rem" }}
-          body={representativeBodyTemplate}
-          filter
-          filterElement={representativeFilterTemplate}
-        />
-        <Column
-          header="Date"
-          filterField="date"
+          header="Launch Date"
+          filterField="launchDate"
           dataType="date"
           style={{ minWidth: "10rem" }}
           body={dateBodyTemplate}
           filter
           filterElement={dateFilterTemplate}
         />
-        <Column
-          header="Balance"
-          filterField="balance"
-          dataType="numeric"
-          style={{ minWidth: "10rem" }}
-          body={balanceBodyTemplate}
+          <Column
+          field="actor"
+          header="Actor"
           filter
-          filterElement={balanceFilterTemplate}
+          filterPlaceholder="Search by actor"
+          style={{ minWidth: "12rem" }}
         />
         <Column
           field="status"
@@ -431,25 +322,8 @@ export default function TableResults() {
           filter
           filterElement={statusFilterTemplate}
         />
-        <Column
-          field="activity"
-          header="Activity"
-          showFilterMatchModes={false}
-          style={{ minWidth: "12rem" }}
-          body={activityBodyTemplate}
-          filter
-          filterElement={activityFilterTemplate}
-        />
-        <Column
-          field="verified"
-          header="Verified"
-          dataType="boolean"
-          bodyClassName="text-center"
-          style={{ minWidth: "8rem" }}
-          body={verifiedBodyTemplate}
-          filter
-          filterElement={verifiedFilterTemplate}
-        />
+
+
       </DataTable>
       </div>
       </div>
